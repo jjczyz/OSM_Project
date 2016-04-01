@@ -19,12 +19,48 @@ public class MainWindow extends JFrame implements ActionListener {
 		setFrame();
 		
 	}
-	
 	private void setGUI()
 	{
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new GridBagLayout());
 		this.getContentPane().add(mainPanel);
+
+		JPanel patientForm, patientList, patientExamination; 
+		patientForm = new JPanel();
+		patientList = new JPanel();
+		patientExamination= new JPanel();
+		mainPanel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		//natural height, maximum width
+		
+		
+		PatientForm patForm = new PatientForm();
+		
+		c.fill = GridBagConstraints.BOTH;		             
+		c.weighty = 0.5;
+		c.weightx = 0.5;
+		c.gridx = 0;
+		c.gridy = 0;
+		mainPanel.add(patForm, c);
+		
+		PatientExamination patExam = new PatientExamination();
+
+		c.gridx = 0;
+		c.gridy = 1;
+		mainPanel.add(patExam, c);
+		
+		PatientList patList = new PatientList();
+		
+		c.gridheight = 2;
+     	c.gridx = 1;
+		c.gridy = 0;
+		mainPanel.add(patList, c);
+		
+		 patientList.setBorder(BorderFactory.createTitledBorder("Lista Pacjentów"));
+		// patientExamination.setBorder(BorderFactory.createTitledBorder("Badania"));
+		// patientForm.setBorder(BorderFactory.createTitledBorder("Dane Pacjenta"));
+		 
+	
 
 		
 	}
@@ -47,13 +83,13 @@ public class MainWindow extends JFrame implements ActionListener {
 		 JMenuItem menuItem=new JMenuItem("Zamknij");
 		 menuItem.addActionListener( this);
 		 menu.add(menuItem);
+		 
+
+		 
 	}
 
 	
-	public static void main(String[] args)
-	{
-		MainWindow mainWindow = new MainWindow();
-	}
+
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -64,4 +100,22 @@ public class MainWindow extends JFrame implements ActionListener {
 
 	}
 	
+	public static void main(String[] args)
+	{
+		MainWindow mainWindow = new MainWindow();
+		
+		UserInterface inter = new UserInterface();
+		
+		inter.createProductDatabase();
+	    EventQueue.invokeLater(new Runnable() {
+	        public void run() {
+	            try {
+	                UserInterface frame = new UserInterface();
+	                frame.setVisible(true);
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    });
+	}
 }
