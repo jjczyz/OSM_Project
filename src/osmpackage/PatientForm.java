@@ -4,13 +4,17 @@ import javax.swing.*;
 import java.awt.*;
 public class PatientForm extends JPanel {
 	
-	  private JButton saveButton, cancelButton;
-	    private JTextField nameField, surnameField, peselField;
-	    private JLabel nameLabel, surnameLabel, peselLabel, sexLabel, insuranceLabel;
-	    private JRadioButton male, female;
-	    private JComboBox insuranceBox;
-	    private String[] insuranceStrings = {"NFZ", "Prywatnie", "Brak"};
-	    
+	  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JButton saveButton, cancelButton;
+	private JTextField nameField, surnameField, peselField;
+	private JLabel nameLabel, surnameLabel, peselLabel, sexLabel, insuranceLabel;
+	private JRadioButton maleButton, femaleButton;
+	private JComboBox<?> insuranceBox;
+	private String[] insuranceStrings = {"NFZ", "Prywatnie", "Brak"};
+	   
 	PatientForm()
 	{
 		saveButton = new JButton("Zapisz");
@@ -28,10 +32,13 @@ public class PatientForm extends JPanel {
         insuranceLabel = new JLabel("Ubezpieczenie:");
        
         
-        female = new JRadioButton("kobieta");
-        male = new JRadioButton("mê¿czyzna");
+        femaleButton = new JRadioButton("kobieta");
+        maleButton = new JRadioButton("mê¿czyzna");
+        ButtonGroup group = new ButtonGroup();
+        group.add(femaleButton);
+        group.add(maleButton);
 
-        insuranceBox = new JComboBox(insuranceStrings);
+        insuranceBox = new JComboBox<Object>(insuranceStrings);
        
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -68,10 +75,10 @@ public class PatientForm extends JPanel {
         add(sexLabel, c);
         c.gridx = 1;
         c.gridy = 3;
-        add(female, c);
+        add(femaleButton, c);
         c.gridx = 2;
         c.gridy = 3;
-        add(male, c);
+        add(maleButton, c);
         c.gridx = 0;
         c.gridy = 4;
         add(insuranceLabel, c);

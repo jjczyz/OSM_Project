@@ -1,7 +1,7 @@
 package osmpackage;
 
 
-import java.util.*;
+
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,7 +24,7 @@ import javax.swing.border.EmptyBorder;
 public class UserInterface extends JFrame
 {	
 
-	static ArrayList<Product> Products = new ArrayList<Product>();         // list holding products in store
+/*	static ArrayList<Product> Products = new ArrayList<Product>();         // list holding products in store
 	static ArrayList<Product> Receipt = new ArrayList<Product>();		   // list holding products on current shopping list
 /*
 	public static void main(String[] args) {
@@ -40,7 +40,7 @@ public class UserInterface extends JFrame
 	        }
 	    });
 	}*/
-	public UserInterface() 
+	/*public UserInterface() 
 	{	
 		this.setTitle("Sales Terminal");
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -240,6 +240,6 @@ public class UserInterface extends JFrame
 	    bd = bd.setScale(places, RoundingMode.HALF_UP);
 	    return bd.doubleValue();
 	}
-	
+*/	
 }
 
