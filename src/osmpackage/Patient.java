@@ -5,43 +5,80 @@ import java.util.ArrayList;
 //class used to create Product objects
 public class Patient 
 {
-	private ArrayList<Patient> Patients = new ArrayList<Patient>();        
+	private static ArrayList<Patient> Patients = new ArrayList<Patient>();        
 	private String patientName;
 	private String patientSurname;
 	private String patientPESEL;
 	private String patientSex;
 	private String patientInsurance;
 	
-	private short patientPulse;  //têtno
-	private short patientSystolic; // ciœnienie skurczowe
-	private short patientDiastolic; //ciœnienie rozkurczowe
+	private int patientPulse;  //têtno
+	private int patientSystolic; // ciœnienie skurczowe
+	private int patientDiastolic; //ciœnienie rozkurczowe
 
 	
-	public void addPatient(short id, String name, String surname, String pesel, String sex, String insurance)
+	
+	public ArrayList<Patient> getList()
 	{
-		Patient pacjent = Patients.get(id-1);
+	    return Patients;
+	}
+	
+	public void removePatient(int id)
+	{
+		Patients.remove(id);
+	}
+	public void addPatient(int id, String name, String surname, String pesel, String sex, String insurance)
+	{
+		Patient pacjent = new Patient();
+		if(id < Patients.size() - 1)
+		{
+			pacjent = Patients.get(id);
+		}	
 		pacjent.patientName = name;
 		pacjent.patientSurname = surname;
 		pacjent.patientPESEL = pesel;
 		pacjent.patientSex = sex;
 		pacjent.patientInsurance = insurance;
+		if(id < Patients.size() - 1)
+		{
+			Patients.set(id, pacjent);
+		}
+		else
+		{			
+			Patients.add(pacjent);
+		}
+		
 	}
 	
-	public void addPatientExamination(short id, short pulse, short systolic, short diastolic)
+	public void addPatientExamination(int id, int pulse, int systolic, int diastolic)
 	{
-		Patient pacjent = Patients.get(id-1);
+		Patient pacjent = new Patient();
+		if(id < Patients.size() - 1)
+		{
+			pacjent = Patients.get(id);
+		}
 		pacjent.patientPulse = pulse;
 		pacjent.patientSystolic = systolic;
 		pacjent.patientDiastolic = diastolic;
-
+		if(id < Patients.size() - 1)
+		{
+			Patients.set(id, pacjent);
+		}
+		else
+		{			
+			Patients.add(pacjent);
+		}
 	}
 	
-	public Patient getPatient(short id)
+	public Patient getPatient(int id)
 	{
-		Patient pacjent = Patients.get(id-1);
+		Patient pacjent = Patients.get(id);
 		return pacjent;
 	}
-
+	public int getPatientsSize()
+	{
+		return Patients.size();
+	}
 	
 	public String getPatientName( ){
 		return patientName;}
@@ -54,11 +91,11 @@ public class Patient
 	public String getPatientInsurance( ){
 		return patientInsurance;}
 	
-	public short getPatientPulse(){
+	public int getPatientPulse(){
 		return patientPulse;}
-	public short getPatientSystolic(){
+	public int getPatientSystolic(){
 		return patientSystolic;}
-	public short getPatientDiastolic(){
+	public int getPatientDiastolic(){
 		return patientDiastolic;}
 
 }

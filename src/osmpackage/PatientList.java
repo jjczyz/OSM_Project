@@ -1,38 +1,49 @@
 package osmpackage;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 public class PatientList extends JPanel {
 	
-	  private JButton saveButton, cancelButton;
-	    private JTextField nameField, surnameField, peselField;
-	    private JLabel nameLabel, surnameLabel, peselLabel, sexLabel, insuranceLabel;
-	    private JRadioButton male, female;
-	    private JComboBox insuranceBox;
-	    private String[] insuranceStrings = {"NFZ", "Prywatnie", "Brak"};
+	  private JButton addButton, deleteButton;
+	  private JTable patientTable;
+	  private JScrollPane scrollPane;
+	  
 	    
 	PatientList()
 	{
-		saveButton = new JButton();
-		cancelButton = new JButton();
+		addButton = new JButton("Dodaj");
+		deleteButton = new JButton("Usuñ");
 		
-          
-        nameField = new JTextField("(imiê)");
-        surnameField = new JTextField("(nazwisko)");
-        peselField = new JTextField("(PESEL)");
-
-        nameLabel = new JLabel("Imiê:");
-        surnameLabel = new JLabel("Nazwisko:");
-        peselLabel = new JLabel("PESEL:");
-        sexLabel = new JLabel("P³eæ:");
-        insuranceLabel = new JLabel("Ubezpieczenie:");
-       
-        
-        female = new JRadioButton("kobieta");
-        male = new JRadioButton("mê¿czyzna");
-
-        insuranceBox = new JComboBox(insuranceStrings);
-       
+		String columnNames[] = { "Imiê i Nazwisko", "P³eæ", "Pesel", "Ubezpieczenie", "Badanie" };
+		DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+		patientTable = new JTable(tableModel);
+		scrollPane = new JScrollPane(patientTable);
+		
+		
+		//to pójdzie do jakiegoœ action listenera
+		Patient patients = new Patient();
+		for(int i = 0; i < patients.getPatientsSize(); i++)
+		{
+			Patient patient = patients.getPatient(i);
+			String name = patient.getPatientName() + patient.getPatientSurname();
+			String sex = patient.getPatientSex();
+			String pesel = patient.getPatientPESEL();
+			String insurance = patient.getPatientInsurance();
+			String examination;
+			if(patient.getPatientDiastolic()!=0 && patient.getPatientSystolic() != 0 && patient.getPatientPulse() != 0)
+				{
+				examination = "1";
+				}
+			else 
+				{
+				examination = "0";
+				}
+			Object data[] = {name, sex, pesel, insurance, examination};
+			tableModel.addRow(data);
+		}
+		
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -41,53 +52,17 @@ public class PatientList extends JPanel {
         c.weighty = 0.5;
         c.gridx = 0;
         c.gridy = 0;
-        add(nameLabel, c);
-        c.gridx = 1;
-        c.gridy = 0;
-        c.gridwidth = 2;
-        add(nameField, c);
+        c.gridwidth = 6;
+        add(scrollPane, c);
         c.gridx = 0;
         c.gridy = 1;
         c.gridwidth = 1;
-        add(surnameLabel, c);
+        add(addButton, c);
         c.gridx = 1;
         c.gridy = 1;
-        c.gridwidth = 2;
-        add(surnameField, c);
-        c.gridx = 0;
-        c.gridy = 2;
-        c.gridwidth = 1;
-        add(peselLabel, c);
-        c.gridx = 1;
-        c.gridy = 2;
-        c.gridwidth = 2;
-        add(peselField, c);
-        c.gridx = 0;
-        c.gridy = 3;
-        c.gridwidth = 1;
-        add(sexLabel, c);
-        c.gridx = 1;
-        c.gridy = 3;
-        add(female, c);
-        c.gridx = 2;
-        c.gridy = 3;
-        add(male, c);
-        c.gridx = 0;
-        c.gridy = 4;
-        add(insuranceLabel, c);
-        c.gridx = 1;
-        c.gridy = 4;
-        c.gridwidth = 2;
-        add(insuranceBox, c);
-        c.gridx = 1;
-        c.gridy = 5;
-        c.gridwidth = 1;
-        add(saveButton, c);
-        c.gridx = 2;
-        c.gridy = 5;
-        add(cancelButton, c);
-       
-        setBorder(BorderFactory.createTitledBorder("Dane pacjenta"));
+        add(deleteButton, c);
+   
+        setBorder(BorderFactory.createTitledBorder("Lista pacjentów"));
        
     
 	}

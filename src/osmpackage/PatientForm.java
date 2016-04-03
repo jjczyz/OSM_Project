@@ -86,11 +86,11 @@ public class PatientForm extends JPanel {
         c.gridy = 4;
         c.gridwidth = 2;
         add(insuranceBox, c);
-        c.gridx = 1;
+        c.gridx = 0;
         c.gridy = 5;
         c.gridwidth = 1;
         add(saveButton, c);
-        c.gridx = 2;
+        c.gridx = 1;
         c.gridy = 5;
         add(cancelButton, c);
        

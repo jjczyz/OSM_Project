@@ -34,6 +34,12 @@ public class MainWindow extends JFrame implements ActionListener {
 		exitButton.addActionListener( this);
 		menu.add(exitButton);
 		
+		short z = 0;
+		short y = 1;
+		Patient pacjent = new Patient();
+		pacjent.addPatient(z, "Jakub", "Czy¿", "9410020241", "M", "NFZ");
+		pacjent.addPatient(y, "Marek", "Kosiñski", "9404120319", "M", "Brak");
+		pacjent.addPatientExamination(z,90, 120, 100);
 		/*
 		 * setGUI
 		 */
@@ -60,6 +66,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		c.gridy = 0;
 		this.add(patList, c);
 		
+		this.setVisible(true);
 	}
 	
 /*
@@ -87,12 +94,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	{
 	    EventQueue.invokeLater(new Runnable() {
 	        public void run() {
-	            try {
-	            	MainWindow mainWindow = new MainWindow();
-	                mainWindow.setVisible(true);
-	            } catch (Exception e) {
-	                e.printStackTrace();
-	            }
+	            	new MainWindow();
 	        }
 	    });
 	}

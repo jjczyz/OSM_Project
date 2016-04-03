@@ -2,37 +2,38 @@ package osmpackage;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Calendar;
+import java.util.Date;
 public class PatientExamination extends JPanel {
 	
-	  private JButton saveButton, cancelButton;
-	    private JTextField nameField, surnameField, peselField;
-	    private JLabel nameLabel, surnameLabel, peselLabel, sexLabel, insuranceLabel;
-	    private JRadioButton male, female;
-	    private JComboBox insuranceBox;
-	    private String[] insuranceStrings = {"NFZ", "Prywatnie", "Brak"};
+	    private JButton saveButton, cancelButton, examinationButton;
+	    private JTextField systolicField, diastolicField, pulseField;
+	    private JLabel dateLabel, systolicLabel, diastolicLabel, pulseLabel;
+	    private JSpinner dateSpinner;
+	    
 	    
 	PatientExamination()
 	{
-		saveButton = new JButton();
-		cancelButton = new JButton();
+		saveButton = new JButton("Zapisz");
+		cancelButton = new JButton("Anuluj");
+		examinationButton = new JButton("Zbadaj");
 		
           
-        nameField = new JTextField("(imiê)");
-        surnameField = new JTextField("(nazwisko)");
-        peselField = new JTextField("(PESEL)");
+        pulseField = new JTextField();
+        systolicField = new JTextField();
+        diastolicField = new JTextField();
 
-        nameLabel = new JLabel("Imiê:");
-        surnameLabel = new JLabel("Nazwisko:");
-        peselLabel = new JLabel("PESEL:");
-        sexLabel = new JLabel("P³eæ:");
-        insuranceLabel = new JLabel("Ubezpieczenie:");
-       
+        dateLabel = new JLabel("Data");
+        pulseLabel = new JLabel("Têtno");
+        systolicLabel = new JLabel("Ciœnienie skurczowe");
+        diastolicLabel = new JLabel("Ciœnienie rozkurczowe");
         
-        female = new JRadioButton("kobieta");
-        male = new JRadioButton("mê¿czyzna");
+        Date today = new Date();
+        dateSpinner = new JSpinner(new SpinnerDateModel(today, null, null, Calendar.DAY_OF_MONTH));
+        JSpinner.DateEditor dataEditor = new JSpinner.DateEditor(dateSpinner, "dd/MM/yy");
+        dateSpinner.setEditor(dataEditor);
 
-        insuranceBox = new JComboBox(insuranceStrings);
-       
+ 
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -41,53 +42,47 @@ public class PatientExamination extends JPanel {
         c.weighty = 0.5;
         c.gridx = 0;
         c.gridy = 0;
-        add(nameLabel, c);
+        add(dateLabel, c);
         c.gridx = 1;
         c.gridy = 0;
         c.gridwidth = 2;
-        add(nameField, c);
+        add(dateSpinner, c);
         c.gridx = 0;
         c.gridy = 1;
         c.gridwidth = 1;
-        add(surnameLabel, c);
+        add(pulseLabel, c);
         c.gridx = 1;
         c.gridy = 1;
         c.gridwidth = 2;
-        add(surnameField, c);
+        add(pulseField, c);
         c.gridx = 0;
         c.gridy = 2;
         c.gridwidth = 1;
-        add(peselLabel, c);
+        add(systolicLabel, c);
         c.gridx = 1;
         c.gridy = 2;
         c.gridwidth = 2;
-        add(peselField, c);
+        add(systolicField, c);
         c.gridx = 0;
         c.gridy = 3;
         c.gridwidth = 1;
-        add(sexLabel, c);
+        add(diastolicLabel, c);
         c.gridx = 1;
         c.gridy = 3;
-        add(female, c);
-        c.gridx = 2;
-        c.gridy = 3;
-        add(male, c);
+        c.gridwidth = 2;
+        add(diastolicField, c);
         c.gridx = 0;
         c.gridy = 4;
-        add(insuranceLabel, c);
-        c.gridx = 1;
-        c.gridy = 4;
-        c.gridwidth = 2;
-        add(insuranceBox, c);
-        c.gridx = 1;
+        add(examinationButton, c);
+        c.gridx = 0;
         c.gridy = 5;
-        c.gridwidth = 1;
         add(saveButton, c);
-        c.gridx = 2;
+        c.gridx = 1;
         c.gridy = 5;
         add(cancelButton, c);
-       
-        setBorder(BorderFactory.createTitledBorder("Dane pacjenta"));
+
+     
+        setBorder(BorderFactory.createTitledBorder("Badanie"));
        
     
 	}
