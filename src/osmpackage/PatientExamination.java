@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 public class PatientExamination extends JPanel {
 	
+		private static PatientExamination patExam;
 	    private JButton saveButton, cancelButton, examinationButton;
 	    private JTextField systolicField, diastolicField, pulseField;
 	    private JLabel dateLabel, systolicLabel, diastolicLabel, pulseLabel;
@@ -84,8 +85,11 @@ public class PatientExamination extends JPanel {
      
         setBorder(BorderFactory.createTitledBorder("Badanie"));
        
-    
 	}
+	public static synchronized PatientExamination getInstance( ) {
+		if (patExam == null) patExam=new PatientExamination();
+	      return patExam;	      
+	   }
 	
 	
 	

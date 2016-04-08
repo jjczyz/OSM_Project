@@ -12,6 +12,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	private JMenu menu;
 	private JMenuItem exitButton;
 	private static final long serialVersionUID = 1L;
+	private static PatientForm patForm;
 	public int defaulMainFrametWidth = 960, defaultMainFrameHeight = 720;
 	
 	public MainWindow()
@@ -34,19 +35,13 @@ public class MainWindow extends JFrame implements ActionListener {
 		exitButton.addActionListener( this);
 		menu.add(exitButton);
 		
-		short z = 0;
-		short y = 1;
-		Patient pacjent = new Patient();
-		pacjent.addPatient(z, "Jakub", "Czy¿", "9410020241", "M", "NFZ");
-		pacjent.addPatient(y, "Marek", "Kosiñski", "9404120319", "M", "Brak");
-		pacjent.addPatientExamination(z,90, 120, 100);
 		/*
 		 * setGUI
 		 */
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();	
 		
-		PatientForm patForm = new PatientForm();
+		patForm = PatientForm.getInstance();
 		c.fill = GridBagConstraints.BOTH;		             
 		c.weighty = 0.5;
 		c.weightx = 0.5;
@@ -64,9 +59,10 @@ public class MainWindow extends JFrame implements ActionListener {
 		c.gridheight = 2;
      	c.gridx = 1;
 		c.gridy = 0;
-		this.add(patList, c);
-		
+		this.add(patList, c);		
 		this.setVisible(true);
+
+	
 	}
 	
 /*
@@ -98,4 +94,5 @@ public class MainWindow extends JFrame implements ActionListener {
 	        }
 	    });
 	}
+	
 }

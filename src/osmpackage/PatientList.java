@@ -1,48 +1,38 @@
 package osmpackage;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
-public class PatientList extends JPanel {
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+public class PatientList extends JPanel implements ActionListener{
 	
-	  private JButton addButton, deleteButton;
-	  private JTable patientTable;
-	  private JScrollPane scrollPane;
-	  
-	    
-	PatientList()
+	private static PatientList patList;
+	private static ArrayList<Patient> patients = new ArrayList<Patient>();   
+	private JButton addButton, deleteButton;
+	private JTable patientTable;
+	private DefaultTableModel tableModel;
+	private JScrollPane scrollPane;
+	private int currentPatientId = -1;
+
+	public PatientList()
 	{
 		addButton = new JButton("Dodaj");
+		addButton.addActionListener( this);
 		deleteButton = new JButton("Usuñ");
+		deleteButton.addActionListener(this);
 		
 		String columnNames[] = { "Imiê i Nazwisko", "P³eæ", "Pesel", "Ubezpieczenie", "Badanie" };
-		DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+		tableModel = new DefaultTableModel(columnNames, 0);    
 		patientTable = new JTable(tableModel);
 		scrollPane = new JScrollPane(patientTable);
 		
-		
-		//to pójdzie do jakiegoœ action listenera
-		Patient patients = new Patient();
-		for(int i = 0; i < patients.getPatientsSize(); i++)
-		{
-			Patient patient = patients.getPatient(i);
-			String name = patient.getPatientName() + patient.getPatientSurname();
-			String sex = patient.getPatientSex();
-			String pesel = patient.getPatientPESEL();
-			String insurance = patient.getPatientInsurance();
-			String examination;
-			if(patient.getPatientDiastolic()!=0 && patient.getPatientSystolic() != 0 && patient.getPatientPulse() != 0)
-				{
-				examination = "1";
-				}
-			else 
-				{
-				examination = "0";
-				}
-			Object data[] = {name, sex, pesel, insurance, examination};
-			tableModel.addRow(data);
-		}
+
 		
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -62,11 +52,95 @@ public class PatientList extends JPanel {
         c.gridy = 1;
         add(deleteButton, c);
    
-        setBorder(BorderFactory.createTitledBorder("Lista pacjentów"));
-       
-    
+        setBorder(BorderFactory.createTitledBorder("Lista pacjentów")); 
 	}
 	
+	public void  addPatient(String name, String surname, String pesel, String sex, String insurance)
+	{
+		Patient pacjent = new Patient();
+		if(currentPatientId != -1)
+		{
+			pacjent = patients.get(currentPatientId);
+		}	
+		pacjent.setPatientName(name);
+		pacjent.setPatientSurname(surname);
+		pacjent.setPatientPesel(pesel);
+		pacjent.setPatientSex(sex);
+		pacjent.setPatientInsurance(insurance);
+		
+		if(currentPatientId != -1)
+		{
+			patients.set(currentPatientId, pacjent);
+		}
+		else
+		{			
+			patients.add(pacjent);
+		}
+		refreshPatientsTable(); //to nie dzia³a, nie mam pojêcia czemu, dzia³a tylko jak dodam te linijke do action listenera w tej klasie
+	}
 	
+	public void addPatientExamination(int pulse, int systolic, int diastolic)
+	{
+		Patient pacjent = new Patient();
+		if(currentPatientId < patients.size() - 1)
+		{
+			pacjent = patients.get(currentPatientId);
+		}
+		pacjent.setPatientPulse(pulse);
+		pacjent.setPatientSystolic(systolic);
+		pacjent.setPatientDiastolic(diastolic);
+		if(currentPatientId < patients.size() - 1)
+		{
+			patients.set(currentPatientId, pacjent);
+		}
+		else
+		{			
+			patients.add(pacjent);
+		}
+		
+		
+	}
 	
+	public void refreshPatientsTable()
+	{
+		for(int i = 0; i < patients.size(); i++)
+		{
+			Patient patient = patients.get(i);
+			String name = patient.getPatientName() + patient.getPatientSurname();
+			String sex = patient.getPatientSex();
+			String pesel = patient.getPatientPESEL();
+			String insurance = patient.getPatientInsurance();
+			String examination;
+			if(patient.getPatientDiastolic()!=0 && patient.getPatientSystolic() != 0 && patient.getPatientPulse() != 0)
+				{
+				examination = "1";
+				}
+			else 
+				{
+				examination = "0";
+				}
+			Object data[] = {name, sex, pesel, insurance, examination};
+			tableModel.addRow(data);
+		}
+	}
+	
+	public void actionPerformed(ActionEvent event) {
+		if (event.getSource() == deleteButton)
+		{
+			if(patients.size()>0) patients.remove(patientTable.getSelectedRow());
+		}
+		if (event.getSource() == addButton)
+		{
+			PatientForm patForm = PatientForm.getInstance();
+			patForm.setPanelEnabled(patForm,true);
+			refreshPatientsTable(); //jak w komentarzu w 79, tutaj z jakiegoœ powodu dzia³a
+		}
+	}
+	public static synchronized PatientList getInstance( ) {
+		if (patList == null) patList=new PatientList();
+	      return patList;	      
+	}
 }
+	
+
+

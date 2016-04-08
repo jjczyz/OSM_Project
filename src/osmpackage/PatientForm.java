@@ -2,23 +2,28 @@ package osmpackage;
 
 import javax.swing.*;
 import java.awt.*;
-public class PatientForm extends JPanel {
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+public class PatientForm extends JPanel implements ActionListener {
 	
-	  /**
-	 * 
-	 */
+	private static PatientForm patForm;
 	private static final long serialVersionUID = 1L;
 	private JButton saveButton, cancelButton;
-	private JTextField nameField, surnameField, peselField;
+	private static JTextField nameField;
+	private JTextField surnameField;
+	private JTextField peselField;
 	private JLabel nameLabel, surnameLabel, peselLabel, sexLabel, insuranceLabel;
 	private JRadioButton maleButton, femaleButton;
+	private ButtonGroup sexButtons;
 	private JComboBox<?> insuranceBox;
 	private String[] insuranceStrings = {"NFZ", "Prywatnie", "Brak"};
 	   
 	PatientForm()
 	{
 		saveButton = new JButton("Zapisz");
+		saveButton.addActionListener( this);
 		cancelButton = new JButton("Anuluj");
+		cancelButton.addActionListener( this);
 		
           
         nameField = new JTextField("(imiê)");
@@ -33,10 +38,14 @@ public class PatientForm extends JPanel {
        
         
         femaleButton = new JRadioButton("kobieta");
+        femaleButton.setActionCommand("K");
+
         maleButton = new JRadioButton("mê¿czyzna");
-        ButtonGroup group = new ButtonGroup();
-        group.add(femaleButton);
-        group.add(maleButton);
+        maleButton.setActionCommand("M");
+        sexButtons = new ButtonGroup();
+        sexButtons.add(femaleButton);
+        sexButtons.add(maleButton);
+        femaleButton.setSelected(true);
 
         insuranceBox = new JComboBox<Object>(insuranceStrings);
        
@@ -95,10 +104,84 @@ public class PatientForm extends JPanel {
         add(cancelButton, c);
        
         setBorder(BorderFactory.createTitledBorder("Dane pacjenta"));
-       
+        setPanelEnabled(this, false);
     
 	}
+
+	public void actionPerformed(ActionEvent event) {
+		if (event.getSource() == saveButton)
+		{
+			if(isAlpha(nameField.getText(), "imiê") && isAlpha(surnameField.getText(), "nazwisko"))
+			{
+				String name = nameField.getText();			
+				String surname = surnameField.getText();
+				String sex = sexButtons.getSelection().getActionCommand();
+				String insurance = (String)insuranceBox.getSelectedItem();
+				if(checkPesel(peselField.getText())) 
+				{
+					String pesel = peselField.getText();
+					PatientList patientList = PatientList.getInstance();
+					patientList.addPatient(name, surname, pesel, sex, insurance);
+				}
+				PatientList patList = PatientList.getInstance();	
+			}
+		}
+		if (event.getSource() == cancelButton)
+		{
+			nameField.setText("");
+			surnameField.setText("");
+			peselField.setText("");
+			femaleButton.setSelected(true);
+			insuranceBox.setSelectedIndex(0); 
+			setPanelEnabled(this,false);
+		}
+	}
+
+	public boolean isAlpha(String string, String field) {
+	    char[] chars = string.toCharArray();
+
+	    for (char c : chars) {
+	        if(!Character.isLetter(c) || chars.length == 0) {
+	        	JOptionPane.showMessageDialog(null,"Proszê wpisaæ poprawne " + field);
+	            return false;
+	        }
+	    }
+
+	    return true;
+	}
 	
-	
-	
+	public boolean checkPesel(String string) {
+	 
+	    char[] chars = string.toCharArray();
+	    for (char c : chars) {
+	        if(Character.isLetter(c) || chars.length == 0) {
+	        	JOptionPane.showMessageDialog(null,"Proszê wpisaæ poprawny pesel");
+	            return false;
+	        }
+	    }
+	    if(chars.length != 11){
+	    	JOptionPane.showMessageDialog(null,"Proszê wpisaæ poprawny pesel");
+	    	return false;
+	    }
+	    return true;
+	}
+
+	void setPanelEnabled(JPanel panel, Boolean isEnabled) {
+	    panel.setEnabled(isEnabled);
+
+	    Component[] components = panel.getComponents();
+
+	    for(int i = 0; i < components.length; i++) {
+	        if(components[i].getClass().getName() == "javax.swing.JPanel") {
+	            setPanelEnabled((JPanel) components[i], isEnabled);
+	        }
+
+	        components[i].setEnabled(isEnabled);
+	    }
+	}
+
+	public static synchronized PatientForm getInstance( ) {
+		if (patForm == null) patForm=new PatientForm();
+	      return patForm;	      
+	   }
 }
