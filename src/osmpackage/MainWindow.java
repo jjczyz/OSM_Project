@@ -13,6 +13,8 @@ public class MainWindow extends JFrame implements ActionListener {
 	private JMenuItem exitButton;
 	private static final long serialVersionUID = 1L;
 	private static PatientForm patForm;
+	private static PatientList patList;
+	private static PatientExamination patExam;
 	public int defaulMainFrametWidth = 960, defaultMainFrameHeight = 720;
 	
 	public MainWindow()
@@ -49,13 +51,13 @@ public class MainWindow extends JFrame implements ActionListener {
 		c.gridy = 0;
 		this.add(patForm, c);
 		
-		PatientExamination patExam = new PatientExamination();
+		patExam = PatientExamination.getInstance();
 		c.gridx = 0;
 		c.gridy = 1;
 		this.add(patExam, c);
 		
 		
-		PatientList patList = new PatientList();		
+		patList = PatientList.getInstance();		
 		c.gridheight = 2;
      	c.gridx = 1;
 		c.gridy = 0;

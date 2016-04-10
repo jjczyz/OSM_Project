@@ -16,7 +16,7 @@ public class PatientForm extends JPanel implements ActionListener {
 	private JRadioButton maleButton, femaleButton;
 	private ButtonGroup sexButtons;
 	private JComboBox<?> insuranceBox;
-	private String[] insuranceStrings = {"NFZ", "Prywatnie", "Brak"};
+	private String[] insuranceStrings = {"NFZ","Prywatnie","Brak"};
 	   
 	PatientForm()
 	{
@@ -107,6 +107,22 @@ public class PatientForm extends JPanel implements ActionListener {
         setPanelEnabled(this, false);
     
 	}
+	
+	public void setFields(Patient patient)
+	{
+		nameField.setText(patient.getPatientName());
+		surnameField.setText(patient.getPatientSurname());
+		peselField.setText(patient.getPatientPESEL());
+		
+		String sex = patient.getPatientSex();
+		if (sex.equals("M")) maleButton.setSelected(true);
+		else femaleButton.setSelected(true);
+		
+		String insurance = patient.getPatientInsurance();
+		if (insurance.equals("NFZ"))insuranceBox.setSelectedIndex(0);
+		if (insurance.equals("Prywatnie"))insuranceBox.setSelectedIndex(1);
+		if (insurance.equals("Brak"))insuranceBox.setSelectedIndex(2);
+	}
 
 	public void actionPerformed(ActionEvent event) {
 		if (event.getSource() == saveButton)
@@ -122,12 +138,22 @@ public class PatientForm extends JPanel implements ActionListener {
 					String pesel = peselField.getText();
 					PatientList patientList = PatientList.getInstance();
 					patientList.addPatient(name, surname, pesel, sex, insurance);
+					
+					nameField.setText("");
+					surnameField.setText("");
+					peselField.setText("");
+					femaleButton.setSelected(true);
+					insuranceBox.setSelectedIndex(0); 
+					setPanelEnabled(this,false);
 				}
-				PatientList patList = PatientList.getInstance();	
+				
 			}
+			
 		}
 		if (event.getSource() == cancelButton)
 		{
+			PatientList patientList = PatientList.getInstance();
+			patientList.removeTableSelection();
 			nameField.setText("");
 			surnameField.setText("");
 			peselField.setText("");
