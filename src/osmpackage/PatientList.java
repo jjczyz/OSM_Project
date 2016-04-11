@@ -10,8 +10,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class PatientList extends JPanel implements ActionListener{
+public class PatientList extends JPanel implements ActionListener, ListSelectionListener{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static PatientList patList;
 	private static ArrayList<Patient> patients = new ArrayList<Patient>();   
 	private JButton addButton, deleteButton;
@@ -31,40 +35,26 @@ public class PatientList extends JPanel implements ActionListener{
 		tableModel = new DefaultTableModel(columnNames, 0);    
 		patientTable = new JTable(tableModel);
 		patientTable.setAutoCreateColumnsFromModel(true);
-		scrollPane = new JScrollPane(patientTable);
+		patientTable.getSelectionModel().addListSelectionListener(this);
+		scrollPane = new JScrollPane(patientTable);	
 		
-		patientTable.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-
-
-			public void valueChanged(ListSelectionEvent arg0) {
-			
-				currentPatientId = patientTable.getSelectedRow();
-				System.out.println(currentPatientId);
-				if(!(currentPatientId < 0))
-				{
-				PatientForm patForm = PatientForm.getInstance();
-				Patient patient = patients.get(currentPatientId);		
-				patForm.setPanelEnabled(patForm,true);
-				patForm.setFields(patient);							
-			}
-			}
-			
-	
-	    });
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.HORIZONTAL;
-       // c.insets = new Insets(5,5,5,5);
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(0,5,0,5);
         c.weightx = 0.5;
         c.weighty = 0.5;
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 6;
         add(scrollPane, c);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0,10,0,10);
         c.gridx = 0;
         c.gridy = 1;
         c.gridwidth = 1;
         add(addButton, c);
+        c.insets = new Insets(0,10,0,260);
         c.gridx = 1;
         c.gridy = 1;
         add(deleteButton, c);
@@ -96,24 +86,16 @@ public class PatientList extends JPanel implements ActionListener{
 		refreshPatientsTable();
 	}
 	
-	public void addPatientExamination(int pulse, int systolic, int diastolic)
+	public void addPatientExamination(int pulse, int systolic, int diastolic, String date)
 	{
 		Patient pacjent = new Patient();
-		if(currentPatientId < patients.size() - 1)
-		{
-			pacjent = patients.get(currentPatientId);
-		}
+		pacjent = patients.get(currentPatientId);
 		pacjent.setPatientPulse(pulse);
 		pacjent.setPatientSystolic(systolic);
 		pacjent.setPatientDiastolic(diastolic);
-		if(currentPatientId < patients.size() - 1)
-		{
-			patients.set(currentPatientId, pacjent);
-		}
-		else
-		{			
-			patients.add(pacjent);
-		}
+		pacjent.setPatientExaminationDate(date);
+		patients.set(currentPatientId, pacjent);
+
 		refreshPatientsTable(); 
 		
 	}
@@ -124,7 +106,6 @@ public class PatientList extends JPanel implements ActionListener{
 		int rowCount = tableModel.getRowCount();
 		for(int i = 0; i < rowCount; i++)
 		{
-			System.out.println("Usuwam rzad" + i);
 			tableModel.removeRow(rowCount-1 - i);
 		}
 		for(int i = 0; i < patients.size(); i++)
@@ -150,18 +131,38 @@ public class PatientList extends JPanel implements ActionListener{
 	
 	public void actionPerformed(ActionEvent event) {
 		if (event.getSource() == deleteButton)
-		{			
-			currentPatientId = -1;
-			if(patients.size()>0) patients.remove(patientTable.getSelectedRow());
-			patientTable.clearSelection();
+		{		
+			if(currentPatientId != -1){
+				patients.remove(currentPatientId);
+			}
+			currentPatientId = -1;		
+			removeTableSelection();
 			refreshPatientsTable();
 		}
 		if (event.getSource() == addButton)
 		{
+			removeTableSelection();
 			PatientForm patForm = PatientForm.getInstance();
-			patForm.setPanelEnabled(patForm,true);
+			Utility.setPanelEnabled(patForm,true);
+			PatientExamination patExam = PatientExamination.getInstance();
+			Utility.setPanelEnabled(patExam,false);
 			currentPatientId = -1;
-			System.out.println(currentPatientId);
+		}
+	}
+	public void valueChanged(ListSelectionEvent arg0) {
+		
+		currentPatientId = patientTable.getSelectedRow();
+		System.out.println(currentPatientId);
+		if(!(currentPatientId < 0)){
+			PatientForm patForm = PatientForm.getInstance();
+			PatientExamination patExam = PatientExamination.getInstance();
+			
+			Utility.setPanelEnabled(patForm,true);
+			Utility.setPanelEnabled(patExam,true);
+			
+			Patient patient = patients.get(currentPatientId);
+			patExam.setFields(patient);
+			patForm.setFields(patient);							
 		}
 	}
 	public static synchronized PatientList getInstance( ) {
@@ -169,9 +170,18 @@ public class PatientList extends JPanel implements ActionListener{
 	      return patList;	      
 	}
 	
+	public ArrayList<Patient> getPatientsList()
+	{		
+		return patients;	
+	}
+	
 	public void removeTableSelection()
 	{
 		patientTable.clearSelection();
+	}
+	public int getCurrentPatientId()
+	{
+		return currentPatientId;
 	}
 	
 }

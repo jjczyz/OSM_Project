@@ -1,7 +1,5 @@
 package osmpackage;
 
-import java.util.ArrayList;
-
 //class used to create Product objects
 public class Patient 
 {
@@ -15,53 +13,65 @@ public class Patient
 	private int patientPulse;  //têtno
 	private int patientSystolic; // ciœnienie skurczowe
 	private int patientDiastolic; //ciœnienie rozkurczowe
+	private String patientExaminationDate;
 
 	
 	public void setPatientName(String name){
 		patientName = name;
-	}
+		}
 	public void setPatientSurname(String surname){
 		patientSurname = surname;
-	}
+		}
 	public void setPatientPesel(String pesel){
 		patientPESEL = pesel;
-	}
+		}
 	public void setPatientSex(String sex){
 		patientSex = sex;
-	}
+		}
 	public void setPatientInsurance(String insurance){
 		patientInsurance = insurance;
-	}
+		}
 	public void setPatientPulse(int pulse){
 		patientPulse = pulse;
-	}
-	public void setPatientSystolic(int systolic)
-	{
+		}
+	public void setPatientSystolic(int systolic){
 		patientSystolic = systolic;
-	}
-	public void setPatientDiastolic(int diastolic)
-	{
+		}
+	public void setPatientDiastolic(int diastolic){
 		patientDiastolic = diastolic;
-	}
-	
+		}
+	public void setPatientExaminationDate(String date){
+		patientExaminationDate = date;
+		}
 	
 	public String getPatientName( ){
-		return patientName;}
+		return patientName;
+		}
 	public String getPatientSurname( ){
-		return patientSurname;}
+		return patientSurname;
+		}
 	public String getPatientPESEL( ){
-		return patientPESEL;}
+		return patientPESEL;
+		}
 	public String getPatientSex( ){
-		return patientSex;}
+		return patientSex;
+		}
 	public String getPatientInsurance( ){
-		return patientInsurance;}
+		return patientInsurance;
+		}
 	
 	public int getPatientPulse(){
-		return patientPulse;}
+		return patientPulse;
+		}
 	public int getPatientSystolic(){
-		return patientSystolic;}
+		return patientSystolic;
+		}
 	public int getPatientDiastolic(){
-		return patientDiastolic;}
+		return patientDiastolic;
+		}
+	public String getPatientExaminationDate(){
+		return patientExaminationDate;
+		}
 	
 	public int getPatientExamination(){
 		

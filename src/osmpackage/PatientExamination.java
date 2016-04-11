@@ -2,22 +2,35 @@ package osmpackage;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-public class PatientExamination extends JPanel {
+import java.util.Random;
+public class PatientExamination extends JPanel implements ActionListener {
 	
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 		private static PatientExamination patExam;
 	    private JButton saveButton, cancelButton, examinationButton;
 	    private JTextField systolicField, diastolicField, pulseField;
 	    private JLabel dateLabel, systolicLabel, diastolicLabel, pulseLabel;
 	    private JSpinner dateSpinner;
+	    private JSpinner.DateEditor dateEditor;
 	    
 	    
 	PatientExamination()
 	{
 		saveButton = new JButton("Zapisz");
+		saveButton.addActionListener(this);
 		cancelButton = new JButton("Anuluj");
+		cancelButton.addActionListener(this);
 		examinationButton = new JButton("Zbadaj");
+		examinationButton.addActionListener(this);
 		
           
         pulseField = new JTextField();
@@ -31,14 +44,16 @@ public class PatientExamination extends JPanel {
         
         Date today = new Date();
         dateSpinner = new JSpinner(new SpinnerDateModel(today, null, null, Calendar.DAY_OF_MONTH));
-        JSpinner.DateEditor dataEditor = new JSpinner.DateEditor(dateSpinner, "dd/MM/yy");
-        dateSpinner.setEditor(dataEditor);
+        dateEditor = new JSpinner.DateEditor(dateSpinner, "dd/MM/yy");
+        dateEditor.getTextField().setEditable( false );
+        dateSpinner.setEditor(dateEditor);
+  
 
  
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
-       // c.insets = new Insets(5,5,5,5);
+        c.insets = new Insets(5,5,5,5);
         c.weightx = 0.5;
         c.weighty = 0.5;
         c.gridx = 0;
@@ -46,31 +61,24 @@ public class PatientExamination extends JPanel {
         add(dateLabel, c);
         c.gridx = 1;
         c.gridy = 0;
-        c.gridwidth = 2;
         add(dateSpinner, c);
         c.gridx = 0;
         c.gridy = 1;
-        c.gridwidth = 1;
         add(pulseLabel, c);
         c.gridx = 1;
         c.gridy = 1;
-        c.gridwidth = 2;
         add(pulseField, c);
         c.gridx = 0;
         c.gridy = 2;
-        c.gridwidth = 1;
         add(systolicLabel, c);
         c.gridx = 1;
         c.gridy = 2;
-        c.gridwidth = 2;
         add(systolicField, c);
         c.gridx = 0;
         c.gridy = 3;
-        c.gridwidth = 1;
         add(diastolicLabel, c);
         c.gridx = 1;
         c.gridy = 3;
-        c.gridwidth = 2;
         add(diastolicField, c);
         c.gridx = 0;
         c.gridy = 4;
@@ -81,15 +89,93 @@ public class PatientExamination extends JPanel {
         c.gridx = 1;
         c.gridy = 5;
         add(cancelButton, c);
-
-     
-        setBorder(BorderFactory.createTitledBorder("Badanie"));
-       
+        
+        Utility.setPanelEnabled(this,false);
+        setBorder(BorderFactory.createTitledBorder("Badanie"));  
 	}
+	public void actionPerformed(ActionEvent event) {
+		if (event.getSource() == examinationButton)
+		{
+			Random rand = new Random();
+			int myrand = rand.nextInt(100);
+			int pulse = 60 + (myrand*(100-60))/100;
+			int systolic = 95 + (myrand*(140-95))/100;
+			int diastolic = 60 + (myrand*(90-60))/100;
+			pulseField.setText(Integer.toString(pulse));
+			systolicField.setText(Integer.toString(systolic));
+			diastolicField.setText(Integer.toString(diastolic));
+			
+		}
+		if(event.getSource() == saveButton)
+		{
+			PatientForm patForm = PatientForm.getInstance();
+			
+			if (checkInt(pulseField.getText())	&&	checkInt(systolicField.getText()) 
+				&& checkInt(diastolicField.getText()))
+				{
+				int pulse = Integer.parseInt(pulseField.getText());
+				int systolic = Integer.parseInt(systolicField.getText());
+				int diastolic = Integer.parseInt(diastolicField.getText());
+				String date = dateEditor.getFormat().format(dateSpinner.getValue());
+				
+				PatientList patientList = PatientList.getInstance();
+				patientList.addPatientExamination(pulse, systolic, diastolic,date);
+				
+				Utility.setPanelEnabled(this, false);
+				Utility.setPanelEnabled(patForm, false);	 
+				}
+			
+			else JOptionPane.showMessageDialog(null,"Proszê podaæ poprawny wynik badañ");
+		}
+		if(event.getSource() == cancelButton)
+		{		
+			PatientForm patForm = PatientForm.getInstance();
+			Utility.setPanelEnabled(this,false);
+			Utility.setPanelEnabled(patForm, false);
+		}
+	}
+
+	
+	public void setFields(Patient patient)
+	{
+		pulseField.setText(Integer.toString(patient.getPatientPulse()));
+		systolicField.setText(Integer.toString(patient.getPatientSystolic()));
+		diastolicField.setText(Integer.toString(patient.getPatientDiastolic()));	
+		if(patient.getPatientExaminationDate() != null){
+			Date date;
+			try {
+				date = new SimpleDateFormat("dd/MM/yy").parse(patient.getPatientExaminationDate());
+				dateSpinner.setValue(date);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else {
+			Date date = new Date();
+			dateSpinner.setValue(date);
+		}			
+		
+	}
+	
 	public static synchronized PatientExamination getInstance( ) {
 		if (patExam == null) patExam=new PatientExamination();
 	      return patExam;	      
 	   }
+	
+	public boolean checkInt(String string) {
+		 
+	    char[] chars = string.toCharArray();
+	    for (char c : chars) {
+	        if(Character.isLetter(c) || chars.length == 0) {
+	            return false;
+	        }
+	    }
+	    if(chars.length >3){
+	    	return false;
+	    }
+	    return true;
+	}
 	
 	
 	

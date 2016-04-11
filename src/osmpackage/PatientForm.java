@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 public class PatientForm extends JPanel implements ActionListener {
 	
 	private static PatientForm patForm;
@@ -52,7 +53,7 @@ public class PatientForm extends JPanel implements ActionListener {
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
-       // c.insets = new Insets(5,5,5,5);
+        c.insets = new Insets(5,5,5,5);
         c.weightx = 0.5;
         c.weighty = 0.5;
         c.gridx = 0;
@@ -104,7 +105,7 @@ public class PatientForm extends JPanel implements ActionListener {
         add(cancelButton, c);
        
         setBorder(BorderFactory.createTitledBorder("Dane pacjenta"));
-        setPanelEnabled(this, false);
+        Utility.setPanelEnabled(this, false);
     
 	}
 	
@@ -127,85 +128,72 @@ public class PatientForm extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		if (event.getSource() == saveButton)
 		{
-			if(isAlpha(nameField.getText(), "imiê") && isAlpha(surnameField.getText(), "nazwisko"))
+			if(Utility.isAlpha(nameField.getText()))
 			{
-				String name = nameField.getText();			
-				String surname = surnameField.getText();
-				String sex = sexButtons.getSelection().getActionCommand();
-				String insurance = (String)insuranceBox.getSelectedItem();
-				if(checkPesel(peselField.getText())) 
+				if(Utility.isAlpha(surnameField.getText()))
 				{
-					String pesel = peselField.getText();
-					PatientList patientList = PatientList.getInstance();
-					patientList.addPatient(name, surname, pesel, sex, insurance);
-					
-					nameField.setText("");
-					surnameField.setText("");
-					peselField.setText("");
-					femaleButton.setSelected(true);
-					insuranceBox.setSelectedIndex(0); 
-					setPanelEnabled(this,false);
+						String name = nameField.getText();			
+						String surname = surnameField.getText();
+						String sex = sexButtons.getSelection().getActionCommand();
+						String insurance = (String)insuranceBox.getSelectedItem();
+						if(checkPesel(peselField.getText())) 
+						{
+							PatientExamination patExam = PatientExamination.getInstance();
+							String pesel = peselField.getText();
+							PatientList patientList = PatientList.getInstance();
+							patientList.addPatient(name, surname, pesel, sex, insurance);
+							nameField.setText("");
+							surnameField.setText("");
+							peselField.setText("");
+							femaleButton.setSelected(true);
+							insuranceBox.setSelectedIndex(0); 
+							Utility.setPanelEnabled(this,false);
+							Utility.setPanelEnabled(patExam,false);
+						}				
 				}
-				
+				else JOptionPane.showMessageDialog(null,"Proszê wpisaæ poprawne nazwisko");
 			}
-			
+		    else JOptionPane.showMessageDialog(null,"Proszê wpisaæ poprawne imiê");
 		}
 		if (event.getSource() == cancelButton)
 		{
+			PatientExamination patExam = PatientExamination.getInstance();
 			PatientList patientList = PatientList.getInstance();
 			patientList.removeTableSelection();
-			nameField.setText("");
-			surnameField.setText("");
-			peselField.setText("");
+			
 			femaleButton.setSelected(true);
 			insuranceBox.setSelectedIndex(0); 
-			setPanelEnabled(this,false);
+		
+			Utility.setPanelEnabled(this,false);
+			Utility.setPanelEnabled(patExam,false);
 		}
 	}
-
-	public boolean isAlpha(String string, String field) {
-	    char[] chars = string.toCharArray();
-
-	    for (char c : chars) {
-	        if(!Character.isLetter(c) || chars.length == 0) {
-	        	JOptionPane.showMessageDialog(null,"Proszê wpisaæ poprawne " + field);
-	            return false;
-	        }
-	    }
-
-	    return true;
+	public boolean checkPesel(String string) {
+		
+		if(!Utility.isDigit(string) || !Utility.checkLength(string, 1)){ 
+			
+			JOptionPane.showMessageDialog(null,"Proszê wpisaæ poprawny PESEL");
+			return false;
+		}
+		
+		PatientList patList = PatientList.getInstance();
+		ArrayList<Patient> list = patList.getPatientsList();
+		for(int i=0; i < list.size(); i++)
+		{
+			Patient patient = list.get(i);
+		    if(string.equals(patient.getPatientPESEL()))
+		    {
+		    	if(patList.getCurrentPatientId() == i)
+		    	{
+		    		return true;
+		    	}
+		    	else JOptionPane.showMessageDialog(null,"Ten pacjent ju¿ jest w bazie");
+		    	return false;
+		    }   	
+		}
+		return true;
 	}
 	
-	public boolean checkPesel(String string) {
-	 
-	    char[] chars = string.toCharArray();
-	    for (char c : chars) {
-	        if(Character.isLetter(c) || chars.length == 0) {
-	        	JOptionPane.showMessageDialog(null,"Proszê wpisaæ poprawny pesel");
-	            return false;
-	        }
-	    }
-	    if(chars.length != 11){
-	    	JOptionPane.showMessageDialog(null,"Proszê wpisaæ poprawny pesel");
-	    	return false;
-	    }
-	    return true;
-	}
-
-	void setPanelEnabled(JPanel panel, Boolean isEnabled) {
-	    panel.setEnabled(isEnabled);
-
-	    Component[] components = panel.getComponents();
-
-	    for(int i = 0; i < components.length; i++) {
-	        if(components[i].getClass().getName() == "javax.swing.JPanel") {
-	            setPanelEnabled((JPanel) components[i], isEnabled);
-	        }
-
-	        components[i].setEnabled(isEnabled);
-	    }
-	}
-
 	public static synchronized PatientForm getInstance( ) {
 		if (patForm == null) patForm=new PatientForm();
 	      return patForm;	      
